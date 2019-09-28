@@ -110,7 +110,12 @@ hr.plain {
 	Border: None;
 	Height: .75REM;
 }
+*:Link,
+*:Visited { Color: #1F1A14 }
+*:Link:Hover,
+*:Visited:Hover { Color: #948D87 }
 span.lettrine {
+	Color: #B01C1C;
 	Font-Family: Serif;
 	Font-Variant-Caps: Small-Caps;
 }
@@ -123,6 +128,13 @@ span.lettrine>span:First-Child {
 	Padding: .3REM 0 0;
 	Min-Width: 3REM;
 	Height: 3REM;
+	Color: #FAF8F7;
+	Background: Linear-Gradient(
+		To Bottom,
+		#B01C1C 2%,
+		#302F2B 95%,
+		#1F1A14
+	);
 	Font-Size: 2.5EM;
 	Font-Weight: Bold;
 	Line-Height: 1;
@@ -178,7 +190,7 @@ span.lettrine>span:First-Child {
 #ArchiveStyle\.pagenav a:Not(.screenreader),
 #ArchiveStyle\.pagenav button {
 	Display: Inline-Block;
-	Margin: 0;
+	Margin: 0 .125EM;
 	Border-Style: Solid;
 	Border-Color: #B8B3B0 #B8B3B0 #948D87;
 	Border-Width: 1PX;
@@ -244,7 +256,7 @@ span.lettrine>span:First-Child {
 	List-Style-Type: Square;
 }
 #ArchiveStyle\.metadata dd+dd { Margin-Top: .1875REM }
-#ArchiveStyle\.warning {
+#ArchiveStyle\.metadata\.warning {
 	Font-Weight: Bold;
 	Text-Decoration: Underline;
 }
@@ -277,7 +289,8 @@ span.lettrine>span:First-Child {
 #BookGen\.footer {
 	Margin: 0;
 	Border-Top: 1PX #75706A Dashed;
-	Padding-Top: Calc(.375REM - 1PX);
+	Padding-Top: Calc(.75REM - 1PX);
+	Color: #302F2B;
 }
 #ArchiveStyle\.clickthrough:Not([open])~#BookGen\.footer {
 	Border-Top: None;

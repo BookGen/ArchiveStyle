@@ -68,7 +68,7 @@ ARCHIVESTYLE := Modules/ArchiveStyle
 # DRAFTS := Drafts
 # export DRAFTS
 
-default: archivestyle bookgen
+default: html
 bookgen: ; @$(MAKE) -ef "$(BOOKGEN)/GNUmakefile"
 archivestyle: ; @$(MAKE) -f "$(ARCHIVESTYLE)/Makefile"
 Makefile: ;
@@ -103,13 +103,14 @@ final: true # If this is a final, published draft; adds copyright declaration
 
 # You can use lists and HTML in the following properties:
 ArchiveStyle:
-  rating: "The rating of your work (e.g., Mature)"
-  warnings: "Any content warnings for your work"
-  category: "F/F, Other, etc."
-  fandom: "Fandom name(s)"
-  relationship: "Relationship pairings"
-  character: "Characters in the fic"
-  tagged: "Additional tags"
+  metadata:
+    rating: "The rating of your work (e.g., Mature)"
+    warning: "Any content warnings for your work"
+    category: "F/F, Other, etc."
+    fandom: "Fandom name(s)"
+    relationship: "Relationship pairings"
+    character: "Characters in the fic"
+    tagged: "Additional tags"
   clickthrough: |
     If set, this adds a clickthrough disclaimer for viewing the content.
   summary: |

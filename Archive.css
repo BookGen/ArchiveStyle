@@ -1,1 +1,285 @@
+/* Basic layout */
+html {
+	Color: #1F1A14;
+	Background: #FAF8F7;
+	Font: Normal Medium / 1.125 Sans-Serif;
+}
+body {
+	Margin: Auto;
+	Padding: .75REM 2REM;
+	Max-Width: 37REM;
+}
+aside,
+div[role=note] {
+	Margin: .75EM -1EM;
+	Border: 1PX #57534C Dashed;
+	Padding: Calc(.75EM - 1PX) 1.5EM;
+	Line-Height: 1.125;
+	Background: #DEDBD9;
+	Box-Shadow: 1PX 1PX 3PX #302F2B;
+	Text-Align: Left;
+}
+footer {
+	Margin: .375REM 0;
+	Font-Size: Smaller;
+	Text-Align: Center;
+}
+div.chapterprecis {
+	Margin: 0 Auto 1.5REM;
+	Max-Width: Max-Content;
+	Font-Family: Serif;
+	Font-Size: 1.25EM;
+	Font-Style: Italic;
+	Line-Height: 1.5;
+}
+div.verse {
+	Margin: 1EM Auto;
+	Max-Width: Max-Content;
+	Font-Style: Italic;
+	Line-Height: 1.5;
+}
+div.verse p { Margin: 0 0 1EM }
+div.verse span.line-item {
+	Display: Block;
+	Padding-Left: 1.5EM;
+	Text-Indent: -1.5EM;
+}
+div.verse.alternating span.line-item:Nth-Child(Even),
+div.verse span.line-item.indented { Padding-Left: 3EM }
+div.verse span.line-item * { Text-Indent: 0 }
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	Font-Family: Serif;
+	Font-Weight: Inherit;
+	Line-Height: 1;
+}
+h1 {
+	Margin: .5EM 0 1EM;
+	Font-Size: 1.5EM;
+	Text-Align: Center;
+	Text-Decoration: Underline;
+}
+h1:Not(.unnumbered)::BEFORE {
+	Font-Style: Normal;
+	Content: Var(--BookGen-Noun) " " Counter(BookGen-Chapter, Decimal-Leading-Zero) ": ";
+}
+h2 {
+	Margin: .5EM 0;
+	Font-Size: 1.5EM;
+}
+h3 {
+	Margin: .5EM 0 .375EM;
+	Font-Size: 1.125EM;
+}
+h4,
+h5,
+h6 {
+	Font-Size: 1EM;
+	Line-Height: 1.5;
+}
+h4 {
+	Margin: .5EM 0 .25EM;
+	Font-Weight: Bold;
+}
+h5 {
+	Margin: .5EM 0 .25EM;
+	Font-Variant-Caps: Small-Caps;
+}
+h6 {
+	Margin: .5EM 0 0;
+	Text-Decoration: Underline;
+}
+p,
+aside p,
+div[role=note] p,
+footer p { Margin: 0 0 .75EM }
+hr {
+	Margin: .75EM 0 Calc(.75EM - 1PX);
+	Border-Style: None None Solid;
+	Border-Color: #57534C;
+	Border-Width: 1PX;
+	Padding: 0;
+	Background: Transparent;
+}
+hr.plain {
+	Margin: 0;
+	Border: None;
+	Height: .75REM;
+}
+span.lettrine {
+	Font-Family: Serif;
+	Font-Variant-Caps: Small-Caps;
+}
+span.lettrine>span:First-Child {
+	Display: Inline-Block;
+	Float: Left;
+	Box-Sizing: Border-Box;
+	Margin: Calc(.1REM - 1PX) .125REM Calc(.1REM - 1PX) -1.5REM;
+	Border: 1PX Solid;
+	Padding: .3REM 0 0;
+	Min-Width: 3REM;
+	Height: 3REM;
+	Font-Size: 2.5EM;
+	Font-Weight: Bold;
+	Line-Height: 1;
+	Text-Align: Center;
+}
+*.screenreader {
+	Position: Absolute;
+	Margin: 0 -1PX -1PX 0;
+	Width: 1PX;
+	Height: 1PX;
+	Color: Transparent;
+	Clip-Path: Inset(50%);
+	Z-Index: -1;
+}
 
+/* Header */
+#ArchiveStyle\.header { Margin: 3REM 3REM 5REM }
+#ArchiveStyle\.series,
+#ArchiveStyle\.title,
+#ArchiveStyle\.author {
+	Margin: 0;
+	Font-Family: Serif;
+	Text-Align: Center;
+}
+#ArchiveStyle\.series {
+	Font-Size: 1.5EM;
+	Font-Style: Italic;
+}
+#ArchiveStyle\.title {
+	Font-Size: 2.25EM;
+	Line-Height: 1.5;
+}
+#ArchiveStyle\.title cite { Font: Inherit }
+#ArchiveStyle\.author {
+	Margin-Bottom: 1.125EM;
+	Font-Size: 1.125EM;
+	Line-Height: 1;
+}
+
+/* Page navigation */
+#ArchiveStyle\.pagenav { Text-Align: Center }
+#ArchiveStyle\.pagenav ul {
+	Margin: 0;
+	Padding: 0;
+	Line-Height: 2;
+}
+#ArchiveStyle\.pagenav li {
+	Display: Inline;
+	Margin: 0;
+	Padding: 0;
+}
+#ArchiveStyle\.pagenav li::AFTER { Content: " " }
+#ArchiveStyle\.pagenav a:Not(.screenreader),
+#ArchiveStyle\.pagenav button {
+	Display: Inline-Block;
+	Margin: 0;
+	Border-Style: Solid;
+	Border-Color: #B8B3B0 #B8B3B0 #948D87;
+	Border-Width: 1PX;
+	Border-Radius: .25EM;
+	Padding: Calc(.25EM - 1PX) Calc(.5EM - 1PX);
+	Color: #302F2B;
+	Background: Linear-Gradient(
+		To Bottom,
+		#FAF8F7 2%,
+		#DEDBD9 95%,
+		#B8B3B0
+	);
+	Font: Inherit;
+	Line-Height: 1;
+	Text-Decoration: None;
+	Cursor: Pointer;
+}
+#ArchiveStyle\.pagenav a:Not(.screenreader):Focus,
+#ArchiveStyle\.pagenav a:Not(.screenreader):Hover,
+#ArchiveStyle\.pagenav button:Focus,
+#ArchiveStyle\.pagenav button:Hover {
+	Color: #B01C1C;
+	Border-Color: #75706A #B8B3B0 #948D87 #75706A;
+	Box-Shadow: Inset 2PX 2PX 2PX #B8B3B0;
+}
+#ArchiveStyle\.pagenav a:Not(.screenreader):Active,
+#ArchiveStyle\.pagenav button:Active {
+	Color: #1F1A14;
+	Background: #DEDBD9;
+	Border-Color: #FAF8F7;
+	Box-Shadow: Inset 1PX 1PX 3PX #302F2B;
+}
+
+/* Metadata */
+#ArchiveStyle\.metadata {
+	Display: Block;
+	Margin: Calc(.375REM - 1PX) 0;
+	Border: 1PX Solid #B8B3B0;
+	Padding: .375REM .75REM;
+}
+#ArchiveStyle\.metadata dl {
+	Display: Table;
+	Margin: 0;
+	Border-Spacing: 0 .375REM;
+	Padding: 0;
+	Min-Width: 100%;
+	Font-Size: Smaller;
+}
+#ArchiveStyle\.metadata dt { Display: Contents }
+#ArchiveStyle\.metadata dt::BEFORE {
+	Display: Table-Row;
+	Content: "";
+}
+#ArchiveStyle\.metadata dt::AFTER {
+	Display: Table-Cell;
+	Content: "";
+}
+#ArchiveStyle\.metadata dt span::AFTER { Content: ":" }
+#ArchiveStyle\.metadata dd {
+	Display: List-Item;
+	Margin: 0 0 0 1.5EM;
+	Padding: 0;
+	List-Style-Type: Square;
+}
+#ArchiveStyle\.metadata dd+dd { Margin-Top: .1875REM }
+#ArchiveStyle\.warning {
+	Font-Weight: Bold;
+	Text-Decoration: Underline;
+}
+
+/* Clickthrough */
+#ArchiveStyle\.clickthrough summary {
+	Display: Block;
+	Margin: 0;
+	Border-Bottom: 1PX #F56E97 Dashed;
+	Padding: .375REM 0 Calc(.375REM - 1PX);
+	Font-Style: Italic;
+	Font-Weight: Bold;
+}
+#ArchiveStyle\.clickthrough summary::AFTER {
+	Display: List-Item;
+	Direction: RTL;
+	List-Style-Type: Inherit;
+	Content: "";
+}
+
+/* Main content */
+#ArchiveStyle\.main {
+	Display: Block;
+	Padding: 3REM 0;
+	Line-Height: 1.5;
+}
+#ArchiveStyle\.main p { Margin: 0 0 1EM }
+
+/* BookGen footer */
+#BookGen\.footer {
+	Margin: 0;
+	Border-Top: 1PX #75706A Dashed;
+	Padding-Top: Calc(.375REM - 1PX);
+}
+#ArchiveStyle\.clickthrough:Not([open])~#BookGen\.footer {
+	Border-Top: None;
+	Padding-Top: .75REM;
+}

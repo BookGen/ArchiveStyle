@@ -43,7 +43,7 @@ You have two options for installation:
 
 2. Otherwise, you will use `git clone`.
 
-In the commands below, replace `$INSTALL` with `git submodule add` or `git clone --recurse-submodules` as determined above.
+In the commands below, replace `$INSTALL` with `git submodule add` or `git clone` as determined above.
 
 To install BookGen itself:
 
@@ -151,9 +151,9 @@ BookGen uses Pandoc under the hood, so the Markdown syntax is [Pandoc Markdown](
 
 ### Compiling your book:
 
-To compile your book, simply run `make -s html`.
+To compile your book, simply run `make -s`.
 This will create two new directories: `HTML/Archive`, which will contain the compiled HTML files (which you can then serve on your website) and `Zip`, which will contain ZIPs of the compiled files and source.
-Running just `make -s` will also produce TeX files, should you need them.
+If you don't need the zips, run `make -s NOARCHIVE=1`
 
 `make gone` will delete all directories created by BookGen and all their contents.
 If you are in drafts mode, **it will also delete the `Markdown` directory**, so be sure to store all your files as drafts if you plan on making use of this feature.
@@ -167,5 +167,4 @@ Otherwise, the chapter metadata will not be inserted into your files.
 
 ### Updating:
 
-To update BookGen, just `cd Modules/BookGen` and `git pull --recurse-submodules`.
-Similarly, to update ArchiveStyle, `cd Modules/ArchiveStyle` and `git pull`.
+To update, just `cd` the `Modules/BookGen` and/or `Modules/ArchiveStyle` directory and `git pull --recurse-submodules`.

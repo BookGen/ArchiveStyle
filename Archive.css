@@ -3,6 +3,7 @@ html {
 	Color: #1F1A14;
 	Background: #FAF8F7;
 	Font: Normal Medium / 1.125 Sans-Serif;
+	--BookGen-Draft: "Draft";
 }
 body {
 	Margin: Auto;
@@ -11,7 +12,7 @@ body {
 }
 aside,
 div[role=note] {
-	Margin: .75EM -1EM;
+	Margin: 1.5EM -1EM;
 	Border: 1PX #57534C Dashed;
 	Padding: Calc(.75EM - 1PX) 1.5EM;
 	Line-Height: 1.125;
@@ -46,6 +47,7 @@ div.verse span.line-item {
 }
 div.verse.alternating span.line-item:Nth-Child(Even),
 div.verse span.line-item.indented { Padding-Left: 3EM }
+div.verse.alternating span.line-item.indented:Nth-Child(Even) { Padding-Left: 4.5EM }
 div.verse span.line-item * { Text-Indent: 0 }
 h1,
 h2,
@@ -69,8 +71,11 @@ h1:Not(.unnumbered)::BEFORE {
 }
 h2 {
 	Margin: .5EM 0;
+	Border-Bottom: 1PX Solid;
+	Padding: 0 0 Calc(.25EM - 1PX);
 	Font-Size: 1.5EM;
 }
+h2::AFTER { Content: ":" }
 h3 {
 	Margin: .5EM 0 .375EM;
 	Font-Size: 1.125EM;
@@ -113,7 +118,11 @@ hr.plain {
 *:Link,
 *:Visited { Color: #1F1A14 }
 *:Link:Hover,
-*:Visited:Hover { Color: #948D87 }
+*:Visited:Hover { Color: #75706A }
+span.indent {
+	Display: Inline-Block;
+	Width: 1.5EM;
+}
 span.lettrine {
 	Color: #B01C1C;
 	Font-Family: Serif;
@@ -151,14 +160,41 @@ span.lettrine>span:First-Child {
 }
 
 /* Header */
-#ArchiveStyle\.header { Margin: 3REM 3REM 5REM }
-#ArchiveStyle\.series,
-#ArchiveStyle\.title,
-#ArchiveStyle\.author {
-	Margin: 0;
+#ArchiveStyle\.header {
+	Position: Relative;
+	Margin: 3REM Auto 5REM;
+	Padding: 0 3REM;
+	Max-Width: Max-Content;
 	Font-Family: Serif;
 	Text-Align: Center;
 }
+html:Not([data--book-gen-final]) #ArchiveStyle\.header::BEFORE {
+	Display: Block;
+	Position: Absolute;
+	Top: 0;
+	Bottom: 0;
+	Left: 0;
+	Right: 0;
+	Margin: Auto;
+	Border: Thick Solid;
+	Padding: 0 .75REM;
+	Height: 1EM;
+	Width: Max-Content;
+	Color: #B01C1C;
+	Opacity: .6;
+	Font-Size: 3REM;
+	Font-Family: Serif;
+	Font-Weight: Bold;
+	Font-Variant-Caps: All-Small-Caps;
+	Line-Height: 1;
+	White-Space: NoWrap;
+	Text-Transform: Uppercase;
+	Transform: Rotate(-.625RAD);
+	Filter: Blur(.5PX);
+	Z-Index: -1;
+	Content: Var(--BookGen-Draft);
+}
+#ArchiveStyle\.header p { Margin: 0 }
 #ArchiveStyle\.series {
 	Font-Size: 1.5EM;
 	Font-Style: Italic;
@@ -167,7 +203,10 @@ span.lettrine>span:First-Child {
 	Font-Size: 2.25EM;
 	Line-Height: 1.5;
 }
-#ArchiveStyle\.title cite { Font: Inherit }
+#ArchiveStyle\.title * {
+	Font: Inherit;
+	Text-Decoration: None;
+}
 #ArchiveStyle\.author {
 	Margin-Bottom: 1.125EM;
 	Font-Size: 1.125EM;
@@ -223,6 +262,34 @@ span.lettrine>span:First-Child {
 	Border-Color: #FAF8F7;
 	Box-Shadow: Inset 1PX 1PX 3PX #302F2B;
 }
+#ArchiveStyle\.index {
+	Display: Inline-Block;
+	Position: Relative;
+	Height: 2EM;
+}
+#ArchiveStyle\.indexnav {
+	Display: Block;
+	Position: Absolute;
+	Top: 100%;
+	Left: 0;
+	Border: 1PX #57534C Dashed;
+	Padding: Calc(.25EM - 1PX) .5EM;
+	Background: #DEDBD9;
+	Box-Shadow: 1PX 1PX 3PX #302F2B;
+	Font-Size: Smaller;
+	Line-Height: 1.75;
+	White-Space: NoWrap;
+	Text-Align: Right;
+}
+#ArchiveStyle\.indexnav[hidden] { Display: None }
+#ArchiveStyle\.indexnav label {
+	Display: Block;
+	Text-Align: Left;
+}
+#ArchiveStyle\.indexnav select {
+	Margin: 0 .125EM;
+	Vertical-Align: Middle;
+}
 
 /* Metadata */
 #ArchiveStyle\.metadata {
@@ -277,10 +344,18 @@ span.lettrine>span:First-Child {
 	Content: "";
 }
 
+/* Preamble/Postamble */
+#ArchiveStyle\.preamble,
+#ArchiveStyle\.postamble {
+	Display: Block;
+	Margin: 1.5REM 0;
+	Padding: 0 3REM;
+}
+
 /* Main content */
 #ArchiveStyle\.main {
 	Display: Block;
-	Padding: 3REM 0;
+	Margin: 3REM 0;
 	Line-Height: 1.5;
 }
 #ArchiveStyle\.main p { Margin: 0 0 1EM }

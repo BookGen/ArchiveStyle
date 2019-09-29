@@ -35,29 +35,28 @@ def action(elem, doc):
 def finalize(doc):
 	if doc.format == 'html' or doc.format == 'html5':
 		metadata = []
-		ordered_metadata = ['rating', 'warning', 'category', 'fandom', 'relationship', 'character', 'tagged']
+		ordered_metadata = OrderedDict([
+			('rating', doc.get_metadata('ArchiveStyle.localization.rating', 'Rating')),
+			('warning', doc.get_metadata('ArchiveStyle.localization.warning', 'Warnings')),
+			('category', doc.get_metadata('ArchiveStyle.localization.category', 'Categories')),
+			('fandom', doc.get_metadata('ArchiveStyle.localization.fandom', 'Fandoms')),
+			('relationship', doc.get_metadata('ArchiveStyle.localization.relationship', 'Relationship')),
+			('character', doc.get_metadata('ArchiveStyle.localization.character', 'Characters')),
+			('tagged', doc.get_metadata('ArchiveStyle.localization.tagged', 'Additional Tags'))
+		])
 		metadict = doc.get_metadata('ArchiveStyle.metadata')
 		keys = []
 		ordered = False
 		if isinstance(metadict, dict):
-			keys = ordered_metadata + list(set(doc.get_metadata('ArchiveStyle.metadata', dict()).keys()) - set(ordered_metadata))
+			keys = ordered_metadata.keys() + list(set(doc.get_metadata('ArchiveStyle.metadata', dict()).keys()) - set(ordered_metadata.keys()))
 		elif isinstance(metadict, list):
 			keys = OrderedDict(map(lambda a: tuple(a), metadict)).keys()
 			ordered = True
 		for path in keys:
-		# OrderedDict([
-		# 	('ArchiveStyle.rating', doc.get_metadata('ArchiveStyle.localization.rating', 'Rating')),
-		# 	('ArchiveStyle.warning', doc.get_metadata('ArchiveStyle.localization.warning', 'Warnings')),
-		# 	('ArchiveStyle.category', doc.get_metadata('ArchiveStyle.localization.category', 'Category')),
-		# 	('ArchiveStyle.fandom', doc.get_metadata('ArchiveStyle.localization.fandom', 'Fandoms')),
-		# 	('ArchiveStyle.relationship', doc.get_metadata('ArchiveStyle.localization.relationship', 'Relationships')),
-		# 	('ArchiveStyle.character', doc.get_metadata('ArchiveStyle.localization.character', 'Characters')),
-		# 	('ArchiveStyle.tagged', doc.get_metadata('ArchiveStyle.localization.tagged', 'Additional Tags'))
-		# ]).items():
-			name = doc.get_metadata('ArchiveStyle.localization.' + path, path.title())
+			name = ordered_metadata.get(path, doc.get_metadata('ArchiveStyle.localization.' + path, path.replace('_', ' ').title()))
 			value = doc.get_metadata('ArchiveStyle.metadata', builtin=False).content.list[next(i for i, v in enumerate(metadict) if v[0] == path)].content.list[1] if ordered else doc.get_metadata('ArchiveStyle.metadata.' + path, builtin=False)
 			if isinstance(value, MetaList):
-				metadata.append(DefinitionItem([Span(Str(name), identifier=path)], reduce(lambda item_contents, item_content: item_contents + [Definition(*item_content) if isinstance(item_content, list) else Definition(item_content)], map(contentFromMeta, value.content.list), [])))
+				metadata.append(DefinitionItem([Span(Str(name), identifier='ArchiveStyle.metadata.' + path)], reduce(lambda item_contents, item_content: item_contents + [Definition(*item_content) if isinstance(item_content, list) else Definition(item_content)], map(contentFromMeta, value.content.list), [])))
 			else:
 				item_content = contentFromMeta(value)
 				if (item_content):
@@ -76,17 +75,22 @@ def finalize(doc):
 				if value:
 					value = Plain(Str(value))
 			if value:
-				header.append(Div(*value, identifer='ArchiveStyle.summary') if isinstance(value, list) else Div(value, identifer='ArchiveStyle.summary'))
+				value = [
+					Header(Str(doc.get_metadata('ArchiveStyle.localization.summary', 'Summary')), level=2)
+				] + (value if isinstance(value, list) else [value])
+				header.append(Div(*value, identifier='ArchiveStyle.summary'))
 			value = contentFromMeta(doc.get_metadata('ArchiveStyle.foreword', builtin=False))
 			if value:
-				header.append(RawBlock('<aside id="ArchiveStyle.foreword">', format='html'))
-				header += value if isinstance(value, list) else [value]
-				header.append(RawBlock('</aside>', format='html'))
+				value = [
+					Header(Str(doc.get_metadata('ArchiveStyle.localization.foreword', 'Foreword')), level=2)
+				] + (value if isinstance(value, list) else [value])
+				header.append(Div(*value, identifier='ArchiveStyle.foreword', attributes={'role': 'note'}))
 			value = contentFromMeta(doc.get_metadata('ArchiveStyle.afterword', builtin=False))
 			if value:
-				footer.append(RawBlock('<aside id="ArchiveStyle.afterword">', format='html'))
-				footer += value if isinstance(value, list) else [value]
-				footer.append(RawBlock('</aside>', format='html'))
+				value = [
+					Header(Str(doc.get_metadata('ArchiveStyle.localization.afterword', 'Afterword')), level=2)
+				] + (value if isinstance(value, list) else [value])
+				footer.append(Div(*value, identifier='ArchiveStyle.afterword', attributes={'role': 'note'}))
 		if len(header):
 			content = [
 				RawBlock('<header id="ArchiveStyle.preamble">', format='html')
@@ -96,7 +100,7 @@ def finalize(doc):
 		if len(footer):
 			content += [
 				RawBlock('<footer id="ArchiveStyle.postamble">', format='html')
-			] + header + [
+			] + footer + [
 				RawBlock('</footer>', format='html')
 			]
 		value = contentFromMeta(doc.get_metadata('ArchiveStyle.clickthrough', builtin=False))
@@ -116,6 +120,7 @@ def finalize(doc):
 			] + content
 		links = [Link(Str(doc.get_metadata('ArchiveStyle.localization.main', doc.get_metadata('localization.main', 'Main Content'))), url=('#ArchiveStyle.clickthrough' if doc.get_metadata('ArchiveStyle.clickthrough') else '#ArchiveStyle.main'), classes=['screenreader'], attributes={'tabindex': '-1'})]
 		for path, name in OrderedDict([
+			('index', doc.get_metadata('localization.index', 'Contents')),
 			('first', doc.get_metadata('ArchiveStyle.localization.firstarrow', u'\u21D0 ') + doc.get_metadata('ArchiveStyle.localization.first', doc.get_metadata('localization.first', 'First Chapter'))),
 			('prev', doc.get_metadata('ArchiveStyle.localization.prevarrow', u'\u2190 ') + doc.get_metadata('ArchiveStyle.localization.prev', doc.get_metadata('localization.prev', 'Previous Chapter'))),
 			('next', doc.get_metadata('ArchiveStyle.localization.next', doc.get_metadata('localization.next', u'Next Chapter')) + doc.get_metadata('ArchiveStyle.localization.nextarrow', u' \u2192')),
@@ -125,7 +130,7 @@ def finalize(doc):
  		]).items():
 			value = doc.get_metadata(path)
 			if value:
-				links.append(Link(Str(name), url=value))
+				links.append(Link(Str(name), url=value, identifier='ArchiveStyle.pagenav.' + path))
 		if doc.get_metadata('download'):
 			links.append(Link(Str(doc.get_metadata('ArchiveStyle.localization.download', doc.get_metadata('localization.download', 'Download'))), url=doc.get_metadata('download'), attributes={'download': 'download'}))
 		content = [
@@ -148,12 +153,14 @@ def finalize(doc):
 			] + header + [
 				RawBlock('</header>', format='html')
 			] + content
-		indexSrc = doc.get_metadata('index')
-		if indexSrc:
+		if doc.get_metadata('index'):
 			content.append(RawBlock('''<script> void function ( ) {
 	"use strict"
 	// This code is not necessarily sufficient to handle any EPUB navigational document, but it is sufficient to handle ours.
-	var request = new XMLHttpRequest
+	var
+		contents = document.getElementById('ArchiveStyle.pagenav.index')
+		, request = new XMLHttpRequest
+	if ( !contents ) return
 	request.responseType = "document"
 	request.addEventListener("load", function ( ) {
 		var
@@ -179,7 +186,7 @@ def finalize(doc):
 					node = content.nextElementSibling.firstElementChild
 					continue }
 				else group = null }
-			else if ( content instanceof HTMLAnchorElement ) {
+			else if ( content instanceof HTMLAnchorElement ) if ( content.href != contents.href ) {
 				item = document.createElementNS("http://www.w3.org/1999/xhtml", "option")
 				item.textContent = content.textContent
 				item.value = content.href
@@ -199,28 +206,28 @@ def finalize(doc):
 			var expanded = this.getAttribute("aria-expanded") == "true"
 			document.getElementById("ArchiveStyle.indexnav")[expanded ? "setAttribute" : "removeAttribute"]("hidden", "hidden")
 			this.setAttribute("aria-expanded", expanded ? "false" : "true") })
-		item.textContent = "''' + doc.get_metadata('ArchiveStyle.localization.index', 'Index') + '''"
+		item.textContent = "''' + doc.get_metadata('ArchiveStyle.localization.index', 'Chapter Index') + '''"
 		group.appendChild(item)
 		item = document.createElementNS("http://www.w3.org/1999/xhtml", "label")
+		item.textContent = "''' + doc.get_metadata('ArchiveStyle.localization.navigate', 'Navigate to:') + ''' "
+		item.appendChild(select)
+		select = item
+		item = document.createElementNS("http://www.w3.org/1999/xhtml", "span")
 		item.id = "ArchiveStyle.indexnav"
 		item.setAttribute("hidden", "hidden")
-		item.textContent = "''' + doc.get_metadata('ArchiveStyle.localization.navigate', 'Navigate to:') + '''"
 		item.appendChild(select)
 		select = document.createElementNS("http://www.w3.org/1999/xhtml", "button")
 		select.type = "button"
-		select.addEventListener("click", function ( ) { window.location = this.previousElementSibling.value })
+		select.addEventListener("click", function ( ) { window.location = this.previousElementSibling.firstElementChild.value })
 		select.textContent = "''' + doc.get_metadata('ArchiveStyle.localization.contents', 'Go!') + '''"
 		item.appendChild(select)
 		select = document.createElementNS("http://www.w3.org/1999/xhtml", "a")
-		select.href = "''' + indexSrc + '''"
+		select.href = contents.href
 		select.textContent = title
 		item.appendChild(select)
 		group.appendChild(item)
-		item = document.createElementNS("http://www.w3.org/1999/xhtml", "li")
-		item.appendChild(group)
-		group = document.getElementById("ArchiveStyle.pagenav").firstElementChild
-		group.insertBefore(item, group.firstElementChild.nextElementSibling) })
-	request.open("GET", "''' + indexSrc + '''")
+		contents.parentNode.replaceChild(group, contents) })
+	request.open("GET", contents.href)
 	request.send() }() </script>'''))
 		doc.content = content
 

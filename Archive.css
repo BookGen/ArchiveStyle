@@ -1,4 +1,7 @@
-/* Basic layout */
+@namespace "http://www.w3.org/1999/xhtml";
+@namespace epub "http://www.idpf.org/2007/ops";
+
+/* Sectioning */
 html {
 	Color: #1F1A14;
 	Background: #FAF8F7;
@@ -10,6 +13,13 @@ body {
 	Padding: .75REM 2REM;
 	Max-Width: 37REM;
 }
+article {
+	Margin: 3REM 0;
+	Line-Height: 1.5;
+}
+article ol,
+article ul { Margin: 1EM 0 }
+article p { Margin: 0 0 1EM }
 aside,
 div[role=note] {
 	Margin: 1.5EM -1EM;
@@ -49,6 +59,8 @@ div.verse.alternating span.line-item:Nth-Child(Even),
 div.verse span.line-item.indented { Padding-Left: 3EM }
 div.verse.alternating span.line-item.indented:Nth-Child(Even) { Padding-Left: 4.5EM }
 div.verse span.line-item * { Text-Indent: 0 }
+
+/* Block elements */
 h1,
 h2,
 h3,
@@ -98,6 +110,14 @@ h6 {
 	Margin: .5EM 0 0;
 	Text-Decoration: Underline;
 }
+ol,
+ul {
+	Margin: .75EM 0;
+	Padding: 0 0 0 1.5EM;
+}
+li,
+li ol,
+li ul { Margin: .375EM 0 }
 p,
 aside p,
 div[role=note] p,
@@ -115,6 +135,8 @@ hr.plain {
 	Border: None;
 	Height: .75REM;
 }
+
+/* Inline elements */
 *:Link,
 *:Visited { Color: #1F1A14 }
 *:Link:Hover,
@@ -227,7 +249,8 @@ html:Not([data--book-gen-final]) #ArchiveStyle\.header::BEFORE {
 }
 #ArchiveStyle\.pagenav li::AFTER { Content: " " }
 #ArchiveStyle\.pagenav a:Not(.screenreader),
-#ArchiveStyle\.pagenav button {
+#ArchiveStyle\.pagenav button,
+#ArchiveStyle\.pagenav summary {
 	Display: Inline-Block;
 	Margin: 0 .125EM;
 	Border-Style: Solid;
@@ -250,13 +273,16 @@ html:Not([data--book-gen-final]) #ArchiveStyle\.header::BEFORE {
 #ArchiveStyle\.pagenav a:Not(.screenreader):Focus,
 #ArchiveStyle\.pagenav a:Not(.screenreader):Hover,
 #ArchiveStyle\.pagenav button:Focus,
-#ArchiveStyle\.pagenav button:Hover {
+#ArchiveStyle\.pagenav button:Hover,
+#ArchiveStyle\.pagenav summary:Focus,
+#ArchiveStyle\.pagenav summary:Hover {
 	Color: #B01C1C;
 	Border-Color: #75706A #B8B3B0 #948D87 #75706A;
 	Box-Shadow: Inset 2PX 2PX 2PX #B8B3B0;
 }
 #ArchiveStyle\.pagenav a:Not(.screenreader):Active,
-#ArchiveStyle\.pagenav button:Active {
+#ArchiveStyle\.pagenav button:Active,
+#ArchiveStyle\.pagenav summary:Active {
 	Color: #1F1A14;
 	Background: #DEDBD9;
 	Border-Color: #FAF8F7;
@@ -281,7 +307,6 @@ html:Not([data--book-gen-final]) #ArchiveStyle\.header::BEFORE {
 	White-Space: NoWrap;
 	Text-Align: Right;
 }
-#ArchiveStyle\.indexnav[hidden] { Display: None }
 #ArchiveStyle\.indexnav label {
 	Display: Block;
 	Text-Align: Left;
@@ -355,10 +380,32 @@ html:Not([data--book-gen-final]) #ArchiveStyle\.header::BEFORE {
 /* Main content */
 #ArchiveStyle\.main {
 	Display: Block;
-	Margin: 3REM 0;
-	Line-Height: 1.5;
+	Margin: -3REM 0;
+	Padding: 3REM 0;
 }
-#ArchiveStyle\.main p { Margin: 0 0 1EM }
+
+/* EPUB navigational element */
+html[data--book-gen-type=index] nav[epub|type] ol {
+	Margin: 0;
+	List-Style: None;
+}
+html[data--book-gen-type=index] nav[epub|type] li { Margin: 0 }
+html[data--book-gen-type=index] nav[epub|type] li a {
+	Display: List-Item;
+	List-Style: Outside Circle;
+}
+html[data--book-gen-type=index] nav[epub|type] li span {
+	Display: Block;
+	Font-Weight: Bold;
+	Margin: .75EM 0 0 -1.5EM;
+	Border-Top: 1PX Solid;
+	Padding: Calc(.375EM - 1PX) 0 0 1.5EM;
+}
+html[data--book-gen-type=index] nav[epub|type] li ol {
+	Margin: 0 0 .75EM -1.5EM;
+	Border-Bottom: 1PX Solid;
+	Padding: 0 0 Calc(.375EM - 1PX) 3EM;
+}
 
 /* BookGen footer */
 #BookGen\.footer {

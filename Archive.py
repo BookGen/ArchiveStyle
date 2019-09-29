@@ -62,8 +62,8 @@ def finalize(doc):
 				if (item_content):
 					metadata.append(DefinitionItem([Span(Str(name), identifier='ArchiveStyle.metadata.' + path)], [Definition(*item_content) if isinstance(item_content, list) else Definition(item_content)]))
 		content = [
-			RawBlock('\n<!-- BEGIN BODY -->\n<article id="ArchiveStyle.main">', format='html'),
-			Div(*doc.content), # Necessary to encapsulate headings
+			RawBlock('\n<!-- BEGIN BODY -->\n<article>', format='html'),
+			Div(*doc.content, identifier='ArchiveStyle.main'),
 			RawBlock('</article>\n<!-- END BODY -->\n', format='html')
 		]
 		header = []
@@ -110,7 +110,23 @@ def finalize(doc):
 				Div(*value) if isinstance(value, list) else Div(value),
 				RawBlock('</summary>', format='html'),
 			] + content + [
-				RawBlock('</details>', format='html')
+				RawBlock('</details>', format='html'),
+				RawBlock('''<script> void function ( ) {
+	var
+		clickthrough = document.getElementById("ArchiveStyle.clickthrough")
+		, setClickthrough = ( url, force ) => String.prototype.replace.apply(url, (force || clickthrough.open ? [/(?:[?]clickthrough=true)?(?:(?=#)|$)/, "?clickthrough=true"] : ["?clickthrough=true", ""]))
+		, handleClickthrough = ( ) => {
+			Array.prototype.forEach.call(document.getElementById("ArchiveStyle.pagenav").querySelectorAll("a[href^='.'], option"), element => {
+					var attribute = element instanceof HTMLAnchorElement ? "href" : "value"
+					element.setAttribute(attribute, setClickthrough(element.getAttribute(attribute))) })
+			history.replaceState(null, "", setClickthrough(location.href)) }
+	clickthrough.open = location.search == "?clickthrough=true"
+	clickthrough.addEventListener("toggle", ( e ) => {
+		handleClickthrough()
+		if ( clickthrough.open ) if ( !(!e || e instanceof CustomEvent) ) clickthrough.scrollIntoView({ behavior: "smooth" }) })
+	handleClickthrough()
+	window.addEventListener("load", ( ) => { if ( location.hash == "#BookGen.main" ) clickthrough.scrollIntoView() })
+	if ( document.documentElement.dataset.BookGenType == "index" ) Array.prototype.forEach.call(document.getElementById("ArchiveStyle.main").querySelectorAll("a"), element => setClickThrough(element.href, true)) }() </script>''')
 			]
 		if len(metadata):
 			content = [
@@ -130,31 +146,15 @@ def finalize(doc):
  		]).items():
 			value = doc.get_metadata(path)
 			if value:
-				links.append(Link(Str(name), url=value, identifier='ArchiveStyle.pagenav.' + path))
+				links.append(Link(Str(name), url=value + '#BookGen.main' if value[0] == '.' else value, identifier='ArchiveStyle.pagenav.' + path))
 		if doc.get_metadata('download'):
 			links.append(Link(Str(doc.get_metadata('ArchiveStyle.localization.download', doc.get_metadata('localization.download', 'Download'))), url=doc.get_metadata('download'), attributes={'download': 'download'}))
 		content = [
 			RawBlock('<nav id="ArchiveStyle.pagenav">', format='html'),
 			BulletList(*map(lambda l: ListItem(Plain(l)), links)),
-			RawBlock('</nav>', format='html'),
-		] + content
-		header = []
-		for path, proc in OrderedDict([
-			('series', lambda n: [RawBlock('<p id="ArchiveStyle.series">', format='html'), Plain(n), RawBlock('</p>', format='html')]),
-			('title', lambda n: [RawBlock('<p id="ArchiveStyle.title"><cite>', format='html'), Plain(Link(n, url=doc.get_metadata('homepage')) if doc.get_metadata('homepage') else n), RawBlock('</cite></p>', format='html')]),
-			('author', lambda n: [RawBlock('<p id="ArchiveStyle.author">', format='html'), Plain(Link(n, url=doc.get_metadata('profile')) if doc.get_metadata('profile') else n), RawBlock('</p>', format='html')])
- 		]).items():
- 			value = doc.get_metadata(path)
- 			if value:
- 				header += proc(Str(value))
-		if len(header):
-			content = [
-				RawBlock('<header id="ArchiveStyle.header">', format='html')
-			] + header + [
-				RawBlock('</header>', format='html')
-			] + content
-		if doc.get_metadata('index'):
-			content.append(RawBlock('''<script> void function ( ) {
+			RawBlock('</nav>', format='html')
+		] + ([
+			RawBlock('''<script> void function ( ) {
 	"use strict"
 	// This code is not necessarily sufficient to handle any EPUB navigational document, but it is sufficient to handle ours.
 	var
@@ -162,7 +162,7 @@ def finalize(doc):
 		, request = new XMLHttpRequest
 	if ( !contents ) return
 	request.responseType = "document"
-	request.addEventListener("load", function ( ) {
+	request.addEventListener("load", ( ) => {
 		var
 			toc = request.responseXML.body.querySelector("nav[role=doc-toc]")
 			, node = toc ? toc.firstElementChild : null
@@ -196,23 +196,17 @@ def finalize(doc):
 				group = null
 				node = node.parentNode.parentNode.nextElementSibling }
 			else node = node.nextElementSibling }
-		group = document.createElementNS("http://www.w3.org/1999/xhtml", "span")
+		group = document.createElementNS("http://www.w3.org/1999/xhtml", "details")
 		group.id = "ArchiveStyle.index"
-		item = document.createElementNS("http://www.w3.org/1999/xhtml", "button")
-		item.type = "button"
-		item.setAttribute("aria-controls", "ArchiveStyle.indexnav")
-		item.setAttribute("aria-expanded", "false")
-		item.addEventListener("click", function ( ) {
-			var expanded = this.getAttribute("aria-expanded") == "true"
-			document.getElementById("ArchiveStyle.indexnav")[expanded ? "setAttribute" : "removeAttribute"]("hidden", "hidden")
-			this.setAttribute("aria-expanded", expanded ? "false" : "true") })
+		item = document.createElementNS("http://www.w3.org/1999/xhtml", "summary")
+		item.type = "summary"
 		item.textContent = "''' + doc.get_metadata('ArchiveStyle.localization.index', 'Chapter Index') + '''"
 		group.appendChild(item)
 		item = document.createElementNS("http://www.w3.org/1999/xhtml", "label")
 		item.textContent = "''' + doc.get_metadata('ArchiveStyle.localization.navigate', 'Navigate to:') + ''' "
 		item.appendChild(select)
 		select = item
-		item = document.createElementNS("http://www.w3.org/1999/xhtml", "span")
+		item = document.createElementNS("http://www.w3.org/1999/xhtml", "div")
 		item.id = "ArchiveStyle.indexnav"
 		item.setAttribute("hidden", "hidden")
 		item.appendChild(select)
@@ -222,13 +216,30 @@ def finalize(doc):
 		select.textContent = "''' + doc.get_metadata('ArchiveStyle.localization.contents', 'Go!') + '''"
 		item.appendChild(select)
 		select = document.createElementNS("http://www.w3.org/1999/xhtml", "a")
-		select.href = contents.href
+		select.setAttribute("href", contents.getAttribute("href"))
 		select.textContent = title
 		item.appendChild(select)
 		group.appendChild(item)
-		contents.parentNode.replaceChild(group, contents) })
+		contents.parentNode.replaceChild(group, contents)
+		document.getElementById("ArchiveStyle.clickthrough").dispatchEvent(new CustomEvent("toggle")) })
 	request.open("GET", contents.href)
-	request.send() }() </script>'''))
+	request.send() }() </script>''')
+		] + content if doc.get_metadata('index') else content)
+		header = []
+		for path, proc in OrderedDict([
+			('series', lambda n: [RawBlock('<p id="ArchiveStyle.series">', format='html'), Plain(n), RawBlock('</p>', format='html')]),
+			('title', lambda n: [RawBlock('<p id="ArchiveStyle.title"><cite>', format='html'), Plain(Link(n, url=doc.get_metadata('homepage')) if doc.get_metadata('homepage') else n), RawBlock('</cite></p>', format='html')]),
+			('author', lambda n: [RawBlock('<p id="ArchiveStyle.author">', format='html'), Plain(Link(n, url=doc.get_metadata('profile')) if doc.get_metadata('profile') else n), RawBlock('</p>', format='html')])
+ 		]).items():
+ 			value = doc.get_metadata(path)
+ 			if value:
+ 				header += proc(Str(value))
+		if len(header):
+			content = [
+				RawBlock('<header id="ArchiveStyle.header">', format='html')
+			] + header + [
+				RawBlock('</header>', format='html')
+			] + content
 		doc.content = content
 
 def main(doc=None):

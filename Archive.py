@@ -61,9 +61,15 @@ def finalize(doc):
 				item_content = contentFromMeta(value)
 				if (item_content):
 					metadata.append(DefinitionItem([Span(Str(name), identifier='ArchiveStyle.metadata.' + path)], [Definition(*item_content) if isinstance(item_content, list) else Definition(item_content)]))
+		content = doc.content.list
+		value = doc.get_metadata('next')
+		if value:
+			content = content + [
+				Plain(Link(Str(doc.get_metadata('ArchiveStyle.localization.next', doc.get_metadata('localization.next', u'Next Chapter')) + doc.get_metadata('ArchiveStyle.localization.nextarrow', u' \u2192')), url=value + '#BookGen.main' if value[0] == '.' else value, identifier='ArchiveStyle.main.next'))
+			]
 		content = [
 			RawBlock('\n<!-- BEGIN BODY -->\n<article>', format='html'),
-			Div(*doc.content, identifier='ArchiveStyle.main'),
+			Div(*content, identifier='ArchiveStyle.main'),
 			RawBlock('</article>\n<!-- END BODY -->\n', format='html')
 		]
 		header = []
@@ -126,7 +132,8 @@ def finalize(doc):
 		if ( clickthrough.open ) if ( !(!e || e instanceof CustomEvent) ) clickthrough.scrollIntoView({ behavior: "smooth" }) })
 	handleClickthrough()
 	window.addEventListener("load", ( ) => { if ( location.hash == "#BookGen.main" ) clickthrough.scrollIntoView() })
-	if ( document.documentElement.dataset.BookGenType == "index" ) Array.prototype.forEach.call(document.getElementById("ArchiveStyle.main").querySelectorAll("a"), element => setClickThrough(element.href, true)) }() </script>''')
+	; (document.documentElement.dataset.BookGenType == "index" ? Array.prototype.slice.call(document.getElementById("ArchiveStyle.main").querySelectorAll("a")) : [ ]).concat(
+	document.getElementById("ArchiveStyle.main.next")).forEach(element => element.href = setClickthrough(element.href, true)) }() </script>''')
 			]
 		if len(metadata):
 			content = [
@@ -186,7 +193,7 @@ def finalize(doc):
 					node = content.nextElementSibling.firstElementChild
 					continue }
 				else group = null }
-			else if ( content instanceof HTMLAnchorElement ) if ( content.href != contents.href ) {
+			else if ( content instanceof HTMLAnchorElement ) if ( content.origin != contents.origin || content.pathname != contents.pathname ) {
 				item = document.createElementNS("http://www.w3.org/1999/xhtml", "option")
 				item.textContent = content.textContent
 				item.value = content.href

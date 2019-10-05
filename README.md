@@ -85,15 +85,15 @@ This looks complicated, but it is just setting things up to defer any `make` com
 
 Create a file titled `info.yml` in your source directory.
 This is a [YAML](https://yaml.org/) file which will store all of your metadata for your work.
-The values supported by ArchiveStyle are:
+Some values supported by ArchiveStyle are:
 
 ```yaml
-# Please only use plaintext for these properties:
 title: "Work title"
 series: "Work series"
 author: "Your name"
 publisher: "Your publisher/website"
-description: "Work summary"
+description: |
+  Work summary.
 homepage: "https://example.com/The-homepage-for-your-work" # A URL
 year: "The copyright year(s) of your work"
 rights: "A short rights statement about your work"
@@ -112,14 +112,14 @@ ArchiveStyle:
     character: "Characters in the fic"
     tagged: "Additional tags"
   clickthrough: |
-    If set, this adds a clickthrough disclaimer for viewing the content.
-  summary: |
-    Work summary (with HTML).
+    If provided, this adds a clickthrough disclaimer for viewing the content.
   foreword: |
     Leading work notes
   afterword: |
     Trailing work notes
 ```
+
+For more on the allowed properties of this file, see [BookGen's CONFIGURING.md](https://github.com/marrus-sh/BookGen/blob/master/CONFIGURING.md) (for general BookGen configuration) as well as the [CONFIGURING.md](./CONFIGURING.md) in this directory (for ArchiveStyle specific configuration).
 
 You needn't specify all (or any) of the above, but an empty `info.yml` file *will* be created if you do not make one.
 You can also set these values on a per-chapter basis using YAML frontmatter.

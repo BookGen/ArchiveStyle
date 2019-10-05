@@ -61,6 +61,7 @@ div.verse {
 	Max-Width: Max-Content;
 	Font-Style: Italic;
 	Line-Height: 1.5;
+	Text-Align: Left;
 }
 div.verse p { Margin: 0 0 1EM }
 div.verse span.line-item {
@@ -90,7 +91,7 @@ h1 {
 	Text-Align: Center;
 	Text-Decoration: Underline;
 }
-h1:Not(.unnumbered)::BEFORE {
+#ArchiveStyle\.main>h1:Not(.unnumbered)::BEFORE {
 	Font-Style: Normal;
 	Content: Var(--BookGen-Noun) " " Counter(BookGen-Chapter, Decimal-Leading-Zero) ": ";
 }
@@ -100,7 +101,6 @@ h2 {
 	Padding: 0 0 Calc(.25EM - 1PX);
 	Font-Size: 1.5EM;
 }
-h2::AFTER { Content: ":" }
 h3 {
 	Margin: .5EM 0 .375EM;
 	Font-Size: 1.125EM;
@@ -273,21 +273,21 @@ html:Not([data--book-gen-final]) #ArchiveStyle\.header::BEFORE {
 }
 
 /* Page navigation */
-#ArchiveStyle\.pagenav { Text-Align: Center }
-#ArchiveStyle\.pagenav ul {
+#ArchiveStyle\.nav { Text-Align: Center }
+#ArchiveStyle\.nav ul {
 	Margin: 0;
 	Padding: 0;
 	Line-Height: 2;
 }
-#ArchiveStyle\.pagenav li {
+#ArchiveStyle\.nav li {
 	Display: Inline;
 	Margin: 0;
 	Padding: 0;
 }
-#ArchiveStyle\.pagenav li::AFTER { Content: " " }
-#ArchiveStyle\.pagenav a:Not(.screenreader),
-#ArchiveStyle\.pagenav button,
-#ArchiveStyle\.pagenav summary {
+#ArchiveStyle\.nav li::AFTER { Content: " " }
+#ArchiveStyle\.nav a:Not(.screenreader),
+#ArchiveStyle\.nav button,
+#ArchiveStyle\.nav summary {
 	Display: Inline-Block;
 	Margin: 0 .125EM;
 	Border-Style: Solid;
@@ -307,28 +307,28 @@ html:Not([data--book-gen-final]) #ArchiveStyle\.header::BEFORE {
 	Text-Decoration: None;
 	Cursor: Pointer;
 }
-#ArchiveStyle\.pagenav a:Not(.screenreader):Focus,
-#ArchiveStyle\.pagenav a:Not(.screenreader):Hover,
-#ArchiveStyle\.pagenav button:Focus,
-#ArchiveStyle\.pagenav button:Hover,
-#ArchiveStyle\.pagenav summary:Focus,
-#ArchiveStyle\.pagenav summary:Hover {
+#ArchiveStyle\.nav a:Not(.screenreader):Focus,
+#ArchiveStyle\.nav a:Not(.screenreader):Hover,
+#ArchiveStyle\.nav button:Focus,
+#ArchiveStyle\.nav button:Hover,
+#ArchiveStyle\.nav summary:Focus,
+#ArchiveStyle\.nav summary:Hover {
 	Color: #B01C1C;
 	Border-Color: #75706A #B8B3B0 #948D87 #75706A;
 	Box-Shadow: Inset 2PX 2PX 2PX #B8B3B0;
 }
-#ArchiveStyle\.pagenav a:Not(.screenreader):Active,
-#ArchiveStyle\.pagenav button:Active,
-#ArchiveStyle\.pagenav summary:Active {
+#ArchiveStyle\.nav a:Not(.screenreader):Active,
+#ArchiveStyle\.nav button:Active,
+#ArchiveStyle\.nav summary:Active {
 	Color: #1F1A14;
 	Background: #DEDBD9;
 	Border-Color: #FAF8F7;
 	Box-Shadow: Inset 1PX 1PX 3PX #302F2B;
 }
 @media ( Prefers-Color-Scheme: Dark ) {
-	#ArchiveStyle\.pagenav a:Not(.screenreader),
-	#ArchiveStyle\.pagenav button,
-	#ArchiveStyle\.pagenav summary {
+	#ArchiveStyle\.nav a:Not(.screenreader),
+	#ArchiveStyle\.nav button,
+	#ArchiveStyle\.nav summary {
 		Border-Color: #57534C #57534C #75706A;
 		Color: #DEDBD9;
 		Background: Linear-Gradient(
@@ -338,18 +338,18 @@ html:Not([data--book-gen-final]) #ArchiveStyle\.header::BEFORE {
 			#57534C
 		);
 	}
-	#ArchiveStyle\.pagenav a:Not(.screenreader):Focus,
-	#ArchiveStyle\.pagenav a:Not(.screenreader):Hover,
-	#ArchiveStyle\.pagenav button:Focus,
-	#ArchiveStyle\.pagenav button:Hover,
-	#ArchiveStyle\.pagenav summary:Focus,
-	#ArchiveStyle\.pagenav summary:Hover {
+	#ArchiveStyle\.nav a:Not(.screenreader):Focus,
+	#ArchiveStyle\.nav a:Not(.screenreader):Hover,
+	#ArchiveStyle\.nav button:Focus,
+	#ArchiveStyle\.nav button:Hover,
+	#ArchiveStyle\.nav summary:Focus,
+	#ArchiveStyle\.nav summary:Hover {
 		Border-Color: #302F2B #57534C #75706A #302F2B;
 		Box-Shadow: Inset 2PX 2PX 2PX #1F1A14;
 	}
-	#ArchiveStyle\.pagenav a:Not(.screenreader):Active,
-	#ArchiveStyle\.pagenav button:Active,
-	#ArchiveStyle\.pagenav summary:Active {
+	#ArchiveStyle\.nav a:Not(.screenreader):Active,
+	#ArchiveStyle\.nav button:Active,
+	#ArchiveStyle\.nav summary:Active {
 		Color: #FAF8F7;
 		Background: #302F2B;
 		Border-Color: #1F1A14;
@@ -391,26 +391,31 @@ html:Not([data--book-gen-final]) #ArchiveStyle\.header::BEFORE {
 }
 
 /* Metadata */
-#ArchiveStyle\.metadata {
+#ArchiveStyle\.meta {
 	Display: Block;
-	Margin: Calc(.375REM - 1PX) 0;
+	Margin: .375REM 0;
 	Border: 1PX Solid #B8B3B0;
-	Padding: .375REM .75REM;
-}
-@media ( Prefers-Color-Scheme: Dark ) {
-	#ArchiveStyle\.metadata { Border-Color: #57534C }
-}
-#ArchiveStyle\.metadata dl {
-	Margin: 0;
-	Padding: 0;
-	Min-Width: 100%;
+	Padding: Calc(.75REM - 1PX);
 	Font-Size: Smaller;
 }
-dt { Margin: .75EM 0 .375EM }
+@media ( Prefers-Color-Scheme: Dark ) {
+	#ArchiveStyle\.meta { Border-Color: #57534C }
+}
+#ArchiveStyle\.meta>div:Not(:First-Child) {
+	Margin: .75REM 0 0;
+	Border-Top: 1PX #B01C1C Dashed;
+	Padding: Calc(.75REM - 1PX) 0 0;
+}
+#ArchiveStyle\.meta dl {
+	Margin: 0;
+	Padding: 0;
+}
+#ArchiveStyle\.metadata dl { Min-Width: 100% }
+#ArchiveStyle\.metadata dt { Margin: .75EM 0 .375EM }
 @supports ( Display: Contents ) {
 	#ArchiveStyle\.metadata dl {
 		Display: Table;
-		Border-Spacing: 0 .375REM;
+		Border-Collapse: Collapse;
 	}
 	#ArchiveStyle\.metadata dt {
 		Display: Contents;
@@ -420,33 +425,66 @@ dt { Margin: .75EM 0 .375EM }
 		Display: Table-Row;
 		Content: "";
 	}
+	#ArchiveStyle\.metadata dt:Not(:First-Child)::BEFORE { Border-Top: .75REM Transparent Solid }
+	#ArchiveStyle\.metadata dt>span {
+		Display: Block;
+		Box-Sizing: Border-Box;
+		Padding: 0 Calc(.75REM - 1PX) 0 0;
+		Width: Max-Content;
+		Max-Width: Calc(( 100VW - 5.5REM ) * .4);
+		Overflow-Wrap: Break-Word;
+	}
+	@media ( Min-Width: 41REM ) {
+		#ArchiveStyle\.metadata dt>span { Max-Width: 14.2REM }
+	}
 	#ArchiveStyle\.metadata dt::AFTER {
 		Display: Table-Cell;
+		Border-Left: 1PX #B01C1CCC Dotted;
 		Content: "";
 	}
 }
-#ArchiveStyle\.metadata dt span::AFTER { Content: ":" }
+#ArchiveStyle\.metadata dt>span::AFTER { Content: ":" }
 #ArchiveStyle\.metadata dd {
 	Display: List-Item;
 	Margin: 0 0 0 1.5EM;
 	Padding: 0;
-	List-Style-Type: Square;
+	Overflow-Wrap: Anywhere;
+	Vertical-Align: Top;
+	List-Style: Square Outside;
 }
-#ArchiveStyle\.metadata dd::MARKER { Color: #B01C1C }
 #ArchiveStyle\.metadata dd+dd { Margin-Top: .1875REM }
 @supports ( Display: Inline Flow-Root List-Item ) {
 	#ArchiveStyle\.metadata dd { Display: Inline Flow-Root List-Item }
+	#ArchiveStyle\.metadata dd::MARKER { Color: #B01C1C }
 	#ArchiveStyle\.metadata dd+dd { Margin-Top: 0 }
 }
 #ArchiveStyle\.metadata\.warning {
 	Font-Weight: Bold;
 	Text-Decoration: Underline;
 }
+#ArchiveStyle\.stats summary { List-Style-Position: Inside }
+#ArchiveStyle\.stats details[open] summary {
+	Margin: 0 0 .75REM;
+	Border-Bottom: 1PX Solid;
+	Padding: 0 0 Calc(.75REM - 1PX);
+}
+#ArchiveStyle\.stats dl { Padding: 0 1.5EM }
+#ArchiveStyle\.stats dt {
+	Display: Inline-Block;
+	Margin: 0 .5EM 0 0;
+	Font-Weight: Bold;
+}
+#ArchiveStyle\.stats dt::AFTER { Content: ":" }
+#ArchiveStyle\.stats dd {
+	Display: Inline;
+	Margin: 0;
+	Padding: 0 1.5EM 0 0;
+}
 
 /* Clickthrough */
 #ArchiveStyle\.clickthrough summary {
 	Display: Block;
-	Margin: 0;
+	Margin: .75REM 0 0;
 	Border-Bottom: 1PX #F56E97 Dashed;
 	Padding: .375REM 0 Calc(.375REM - 1PX);
 	Font-Style: Italic;
@@ -455,7 +493,11 @@ dt { Margin: .75EM 0 .375EM }
 #ArchiveStyle\.clickthrough summary::AFTER {
 	Display: List-Item;
 	Direction: RTL;
+	Margin: .375REM 0 0;
+	Padding: 0 .75REM;
+	Height: 1.125EM;
 	List-Style-Type: Inherit;
+	List-Style-Position: Inside;
 	Content: "";
 }
 
@@ -481,18 +523,18 @@ html[data--book-gen-type=index] nav[epub|type] ol {
 	List-Style: None;
 }
 html[data--book-gen-type=index] nav[epub|type] li { Margin: 0 }
-html[data--book-gen-type=index] nav[epub|type] li a {
+html[data--book-gen-type=index] nav[epub|type] li>a {
 	Display: List-Item;
 	List-Style: Outside Circle;
 }
-html[data--book-gen-type=index] nav[epub|type] li span {
+html[data--book-gen-type=index] nav[epub|type] li>span {
 	Display: Block;
 	Font-Weight: Bold;
 	Margin: .75EM 0 0 -1.5EM;
 	Border-Top: 1PX Solid;
 	Padding: Calc(.375EM - 1PX) 0 0 1.5EM;
 }
-html[data--book-gen-type=index] nav[epub|type] li ol {
+html[data--book-gen-type=index] nav[epub|type] li>ol {
 	Margin: 0 0 .75EM -1.5EM;
 	Border-Bottom: 1PX Solid;
 	Padding: 0 0 Calc(.375EM - 1PX) 3EM;

@@ -20,12 +20,41 @@ body {
 	Max-Width: 37REM;
 }
 article {
+	Position: Relative;
 	Margin: 2.5REM 0;
 	Line-Height: 1.5;
+	Z-Index: 0;
 }
 article ol,
 article ul { Margin: 1EM 0 }
-article p { Margin: 0 0 1EM }
+article div.verse,
+article p,
+article p>span[id^="ArchiveStyle.para"] {
+	Display: Block;
+	Position: Relative;
+	Margin-Top: 1EM;
+	Margin-Bottom: 1EM;
+}
+article div.verse:Target::BEFORE,
+article p>span[id^="ArchiveStyle.para"]:Target::BEFORE {
+	Position: Absolute;
+	Top: -.5EM;
+	Bottom: -.5EM;
+	Left: -.75EM;
+	Right: -.75EM;
+	Border: Medium #EB9100 Outset;
+	Background: #FAE13E;
+	Opacity: .8;
+	Z-Index: -1;
+	Content: "";
+}
+@media ( Prefers-Color-Scheme: Dark ) {
+	article div.verse:Target::BEFORE,
+	article p>span[id^="ArchiveStyle.para"]:Target::BEFORE {
+		Border-Color: #F56E97;
+		Background: #B01C1C;
+	}
+}
 aside,
 div[role=note] {
 	Margin: 1.5EM -1EM;
@@ -539,6 +568,13 @@ html[data--book-gen-type=index] nav[epub|type] li>ol {
 	Border-Bottom: 1PX Solid;
 	Padding: 0 0 Calc(.375EM - 1PX) 3EM;
 }
+html[data--book-gen-type=index] nav[epub|type] li cite {
+	Font-Style: Inherit;
+	Font-Weight: Bold;
+	Quotes: "“" "”" "‘" "’";
+}
+html[data--book-gen-type=index] nav[epub|type] li cite::BEFORE { Content: Open-Quote }
+html[data--book-gen-type=index] nav[epub|type] li cite::AFTER { Content: Close-Quote }
 
 /* BookGen footer */
 #BookGen\.footer {

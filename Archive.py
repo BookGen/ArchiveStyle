@@ -83,7 +83,7 @@ def make_stats(doc):
 		DefinitionItem([
 			Span(*metadata.inlines(doc, 'ArchiveStyle.localization-stats-time', 'Minutes to read'), identifier='ArchiveStyle.stats.time')
 		], [
-			Definition(Plain(Str(u'\u2248' + format(doc.stats['time'], ','))))
+			Definition(Plain(Str(u'\u223C' + format(doc.stats['time'], ','))))
 		])
 	]
 	statsdict = doc.get_metadata('ArchiveStyle.stats')
@@ -160,11 +160,12 @@ def clickthrough_wrap(doc):
 					element.setAttribute(attribute, setClickthrough(element.getAttribute(attribute))) })
 			history.replaceState(null, "", setClickthrough(location.href)) }
 	clickthrough.open = location.search == "?clickthrough=true"
-	clickthrough.addEventListener("toggle", ( e ) => {
-		handleClickthrough()
-		if ( clickthrough.open ) if ( !(!e || e instanceof CustomEvent) ) if ( clickthrough.getBoundingClientRect().top > 0 ) clickthrough.scrollIntoView({ behavior: "smooth" }) })
 	handleClickthrough()
-	window.addEventListener("load", ( ) => { if ( location.hash == "#BookGen.main" ) if ( clickthrough.getBoundingClientRect().top > 0 ) clickthrough.scrollIntoView() })
+	window.addEventListener("load", ( ) => {
+		clickthrough.addEventListener("toggle", ( e ) => {
+			handleClickthrough()
+			if ( clickthrough.open ) if ( !(!e || e instanceof CustomEvent) ) if ( clickthrough.getBoundingClientRect().top > 0 ) clickthrough.scrollIntoView({ behavior: "smooth" }) })
+		if ( location.hash == "#BookGen.main" ) if ( clickthrough.getBoundingClientRect().top > 0 ) clickthrough.scrollIntoView() })
 	; (document.documentElement.dataset.BookGenType == "index" ? Array.prototype.slice.call(document.getElementById("ArchiveStyle.main").querySelectorAll("a")) : [ ]).concat(
 	document.getElementById("ArchiveStyle.main.next")).forEach(element => { if (element) element.href = setClickthrough(element.href, true) }) }() </script>''')
 		]
@@ -174,15 +175,16 @@ def add_meta(doc):
 	meta = make_metadata(doc)
 	if meta:
 		result.append(Div(meta, identifier='ArchiveStyle.metadata'))
-	meta = make_stats(doc)
-	if meta:
-		result.append(Div(*[
-			RawBlock('<details><summary>', format='html'),
-			Plain(*metadata.inlines(doc, 'ArchiveStyle.localization-stats', 'Chapter Stats')),
-			RawBlock('</summary>', format='html'),
-			meta,
-			RawBlock('</details>', format='html')
-		], identifier='ArchiveStyle.stats'))
+	if metadata.text(doc, 'type') not in ['index', 'biblio']:
+		meta = make_stats(doc)
+		if meta:
+			result.append(Div(*[
+				RawBlock('<details><summary>', format='html'),
+				Plain(*metadata.inlines(doc, 'ArchiveStyle.localization-stats', 'Chapter Stats')),
+				RawBlock('</summary>', format='html'),
+				meta,
+				RawBlock('</details>', format='html')
+			], identifier='ArchiveStyle.stats'))
 	result.append(RawBlock('</header>', format='html'))
 	if len(result) > 2:
 		doc.content = result + doc.content.list
@@ -324,12 +326,19 @@ def prepare(doc):
 		'paras': 0,
 		'time': 0,
 		'updated': updated.astimezone(timezone.utc),
+		'verses': 0,
 		'words': 0
 	}
 
 def action(elem, doc):
-	if isinstance(elem, Para):
-		doc.stats['paras'] += 1
+	if metadata.text(doc, 'type') != 'index':
+		if isinstance(elem, Div) and 'verse' in elem.classes and not ancestor.metadata(elem):
+				doc.stats['verses'] += 1
+				doc.stats['paras'] += len([x for x in elem.content if isinstance(x, LineBlock)])
+				elem.identifier = elem.identifier or 'ArchiveStyle.verse' + str(doc.stats['verses'])
+		elif isinstance(elem, Para) and not ancestor.metadata(elem):
+			doc.stats['paras'] += 1
+			return Para(Span(*elem.content, identifier='ArchiveStyle.para' + str(doc.stats['paras'])))
 
 def finalize(doc):
 	set_stats(doc)

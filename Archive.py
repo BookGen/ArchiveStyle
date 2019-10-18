@@ -292,7 +292,7 @@ def add_nav(doc):
 	request.open("GET", contents.href)
 	request.send() }() </script>''')
 		)
-	doc.content = nav + doc.content
+	doc.content = nav + doc.content.list
 
 def add_header(doc):
 	header = []

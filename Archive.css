@@ -55,6 +55,10 @@ article p>span[id^="ArchiveStyle.para"]:Target::BEFORE {
 		Background: #B01C1C;
 	}
 }
+blockquote {
+	Margin: 1REM 1.5REM;
+	Line-Height: 1.5;
+}
 aside,
 div[role=note] {
 	Margin: 1.5EM -1EM;
@@ -124,6 +128,7 @@ h1 {
 	Font-Style: Normal;
 	Content: Var(--BookGen-Noun) " " Counter(BookGen-Chapter, Decimal-Leading-Zero) ": ";
 }
+html[data--book-gen-type=appendix] #ArchiveStyle\.main>h1:Not(.unnumbered)::BEFORE { Content: Var(--BookGen-Noun) " " Counter(BookGen-Chapter, Upper-Latin) ": " }
 h2 {
 	Margin: .5EM 0;
 	Border-Bottom: 1PX Solid;

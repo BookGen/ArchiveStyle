@@ -1,9 +1,5 @@
 #!/usr/bin/env python3
 
-"""
-Pandoc HTML filters.
-"""
-
 from panflute import *
 from helper import *
 from datetime import datetime, timezone
@@ -12,10 +8,10 @@ import re
 
 def set_stats(doc):
 	doc_text_content = content.text(doc, doc)
-	doc.stats['paras'] = int(metadata.text(doc, 'ArchiveStyle.stats.paras', doc.stats['paras']))
-	doc.stats['words'] = int(metadata.text(doc, 'ArchiveStyle.stats.words', len(re.split(r'(?<=\S)\s+(?=\S)', re.sub(r'\u2014', ' ', re.sub(r'[\u0021-\u0040\u005B-\u0060\u007B-\u007E\u0080-\u00BF\u00D7\u00F7\u2000-\u2BFF\u2E00-\u2E7F]', '', doc_text_content))))))
-	doc.stats['chars'] = int(metadata.text(doc, 'ArchiveStyle.stats.chars', len(doc_text_content)))
-	doc.stats['time'] = int(metadata.text(doc, 'ArchiveStyle.stats.time', doc.stats['words'] // 275)) # must be defined after words, obviously
+	doc.stats['paras'] = int(metadata.text(doc, 'ArchiveStyle.stats.paras', str(doc.stats['paras'])))
+	doc.stats['words'] = int(metadata.text(doc, 'ArchiveStyle.stats.words', str(len(re.split(r'(?<=\S)\s+(?=\S)', re.sub(r'\u2014', ' ', re.sub(r'[\u0021-\u0040\u005B-\u0060\u007B-\u007E\u0080-\u00BF\u00D7\u00F7\u2000-\u2BFF\u2E00-\u2E7F]', '', doc_text_content)))))))
+	doc.stats['chars'] = int(metadata.text(doc, 'ArchiveStyle.stats.chars', str(len(doc_text_content))))
+	doc.stats['time'] = int(metadata.text(doc, 'ArchiveStyle.stats.time', str(doc.stats['words'] // 275))) # must be defined after words, obviously
 
 def make_metadata(doc):
 	meta = []
@@ -197,7 +193,7 @@ def add_nav(doc):
 		attributes={'tabindex': '-1'},
 		identifier='ArchiveStyle.nav.main'
 	)]
-	for path, name in OrderedDict([
+	for path, name in [
 		('index', metadata.inlines(doc, 'localization-type-index', 'Contents')),
 		('first', metadata.inlines(doc, 'ArchiveStyle.localization-nav-firstarrow', u'\u21D0 ') + metadata.inlines(doc, 'ArchiveStyle.localization-nav-first', 'First Chapter')),
 		('prev', metadata.inlines(doc, 'ArchiveStyle.localization-nav-prevarrow', u'\u2190 ') + metadata.inlines(doc, 'ArchiveStyle.localization-nav-prev', 'Previous Chapter')),
@@ -205,7 +201,7 @@ def add_nav(doc):
 		('last', metadata.inlines(doc, 'ArchiveStyle.localization-nav-last', 'Latest Chapter') + metadata.inlines(doc, 'ArchiveStyle.localization-nav-lastarrow', u' \u21D2')),
 		('biblio', metadata.inlines(doc, 'localization-type-biblio', 'Bibliography')),
 		('repository', metadata.inlines(doc, 'ArchiveStyle.localization-nav-repository', 'Source'))
-	]).items():
+	]:
 		value = metadata.text(doc, path)
 		if value:
 			links.append(Link(
@@ -221,11 +217,13 @@ def add_nav(doc):
 			attributes={'download': 'download'},
 			identifier='ArchiveStyle.nav.download'
 		))
+	nav = [
+		RawBlock('<nav id="ArchiveStyle.nav">', format='html'),
+		BulletList(*map(lambda link: ListItem(Plain(link)), links)),
+		RawBlock('</nav>', format='html')
+	]
 	if doc.get_metadata('index'):
-		doc.content = [
-			RawBlock('<nav id="ArchiveStyle.nav">', format='html'),
-			BulletList(*map(lambda link: ListItem(Plain(link)), links)),
-			RawBlock('</nav>', format='html'),
+		nav.append(
 			RawBlock('''<script> void function ( ) {
 	"use strict"
 	// This code is not necessarily sufficient to handle any EPUB navigational document, but it is sufficient to handle ours.
@@ -293,19 +291,20 @@ def add_nav(doc):
 		document.getElementById("ArchiveStyle.clickthrough").dispatchEvent(new CustomEvent("toggle")) })
 	request.open("GET", contents.href)
 	request.send() }() </script>''')
-		] + doc.content.list
+		)
+	doc.content = nav + doc.content
 
 def add_header(doc):
 	header = []
-	for path, proc in OrderedDict([
+	for path, proc in [
 		('series', lambda n: [RawBlock('<p id="ArchiveStyle.series">', format='html'), Plain(*n), RawBlock('</p>', format='html')]),
 		('title', lambda n: [RawBlock('<p id="ArchiveStyle.title"><cite>', format='html'), Plain(Link(*n, url=metadata.text(doc, 'homepage'))) if doc.get_metadata('homepage') else Plain(*n), RawBlock('</cite></p>', format='html')]),
 		('author', lambda n: [RawBlock('<p id="ArchiveStyle.author">', format='html'), Plain(Link(*n, url=metadata.text(doc, 'profile'))) if doc.get_metadata('profile') else Plain(*n), RawBlock('</p>', format='html')])
-		]).items():
+		]:
 			value = metadata.inlines(doc, path)
 			if value:
 				header += proc(value)
-	if len(header):
+	if header:
 		doc.content = [
 			RawBlock('<header id="ArchiveStyle.header">', format='html')
 		] + header + [

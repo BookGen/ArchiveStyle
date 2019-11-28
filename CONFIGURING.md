@@ -27,6 +27,8 @@ localization-nav-prev: Previous Chapter
 localization-nav-prevarrow: ←
 localization-nav-repository: Source
 
+localization-notes: Notes
+
 localization-postamble-afterword: Afterword
 
 localization-preamble-foreword: Foreword

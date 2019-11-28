@@ -128,7 +128,7 @@ def add_ambles(doc):
 	amble = []
 	value = metadata.blocks(doc, 'ArchiveStyle.afterword')
 	if value:
-		value.insert(0, Header(*(metadata.inlines(doc, 'ArchiveStyle.localization-preamble-afterword', 'Afterword') + [Str(':')]), level=2))
+		value.insert(0, Header(*(metadata.inlines(doc, 'ArchiveStyle.localization-postamble-afterword', 'Afterword') + [Str(':')]), level=2))
 		amble.append(Div(*value, identifier='ArchiveStyle.postamble.afterword', attributes={'role': 'note'}))
 	if len(amble):
 		doc.content.extend([
@@ -136,6 +136,16 @@ def add_ambles(doc):
 		] + amble + [
 			RawBlock('</footer>', format='html')
 		])
+
+def add_notes(doc):
+	value = metadata.blocks(doc, 'ArchiveStyle-chapter.notes.before')
+	if value:
+		value.insert(0, Header(*(metadata.inlines(doc, 'ArchiveStyle.localization-notes', 'Notes') + [Str(':')]), level=2))
+		doc.content.insert(0, Div(*value, identifier='ArchiveStyle.notes.before', attributes={'role': 'note'}))
+	value = metadata.blocks(doc, 'ArchiveStyle-chapter.notes.after')
+	if value:
+		value.insert(0, Header(*(metadata.inlines(doc, 'ArchiveStyle.localization-notes', 'Notes') + [Str(':')]), level=2))
+		doc.content.append(Div(*value, identifier='ArchiveStyle.notes.after', attributes={'role': 'note'}))
 
 def clickthrough_wrap(doc):
 	value = metadata.blocks(doc, 'ArchiveStyle.clickthrough')
@@ -354,6 +364,7 @@ def finalize(doc):
 			Div(*doc.content, identifier='ArchiveStyle.main'),
 			RawBlock('</article>\n<!-- END BODY -->\n', format='html')
 		]
+		add_notes(doc)
 		if metadata.text(doc, 'type') == 'index':
 			add_ambles(doc)
 		clickthrough_wrap(doc)

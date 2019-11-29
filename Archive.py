@@ -7,7 +7,7 @@ from collections import OrderedDict
 import re
 
 def set_stats(doc):
-	doc_text_content = content.text(doc, doc)
+	doc_text_content = content.text(doc.content.list, doc)
 	doc.stats['paras'] = int(metadata.text(doc, 'ArchiveStyle.stats.paras', str(doc.stats['paras'])))
 	doc.stats['words'] = int(metadata.text(doc, 'ArchiveStyle.stats.words', str(len(re.split(r'(?<=\S)\s+(?=\S)', re.sub(r'\u2014', ' ', re.sub(r'[\u0021-\u0040\u005B-\u0060\u007B-\u007E\u0080-\u00BF\u00D7\u00F7\u2000-\u2BFF\u2E00-\u2E7F]', '', doc_text_content)))))))
 	doc.stats['chars'] = int(metadata.text(doc, 'ArchiveStyle.stats.chars', str(len(doc_text_content))))

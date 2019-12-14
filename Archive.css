@@ -251,6 +251,7 @@ span.lettrine>span:First-Child {
 	Height: 1PX;
 	Color: Transparent;
 	Clip-Path: Inset(50%);
+	User-Select: None;
 	Z-Index: -1;
 }
 

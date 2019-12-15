@@ -8,10 +8,10 @@ import re
 
 def set_stats(doc):
 	doc_text_content = content.text(doc.content.list, False) # `False` value for `doc` causes raw blocks to be dropped
-	doc.stats['paras'] = int(metadata.text(doc, 'ArchiveStyle.stats.paras', str(doc.stats['paras'])))
-	doc.stats['words'] = int(metadata.text(doc, 'ArchiveStyle.stats.words', str(len(re.split(r'(?<=\S)\s+(?=\S)', re.sub(r'\u2014', ' ', re.sub(r'[\u0021-\u0040\u005B-\u0060\u007B-\u007E\u0080-\u00BF\u00D7\u00F7\u2000-\u2BFF\u2E00-\u2E7F]', '', doc_text_content)))))))
-	doc.stats['chars'] = int(metadata.text(doc, 'ArchiveStyle.stats.chars', str(len(doc_text_content))))
-	doc.stats['time'] = int(metadata.text(doc, 'ArchiveStyle.stats.time', str(doc.stats['words'] // 275))) # must be defined after words, obviously
+	doc.stats['paras'] = int(metadata.text(doc, 'ArchiveStyle-chapter.stats.paras', str(doc.stats['paras'])))
+	doc.stats['words'] = int(metadata.text(doc, 'ArchiveStyle-chapter.stats.words', str(len(re.split(r'(?<=\S)\s+(?=\S)', re.sub(r'\u2014', ' ', re.sub(r'[\u0021-\u0040\u005B-\u0060\u007B-\u007E\u0080-\u00BF\u00D7\u00F7\u2000-\u2BFF\u2E00-\u2E7F]', '', doc_text_content)))))))
+	doc.stats['chars'] = int(metadata.text(doc, 'ArchiveStyle-chapter.stats.chars', str(len(doc_text_content))))
+	doc.stats['time'] = int(metadata.text(doc, 'ArchiveStyle-chapter.stats.time', str(doc.stats['words'] // 275))) # must be defined after words, obviously
 
 def make_metadata(doc):
 	meta = []
@@ -53,7 +53,7 @@ def make_metadata(doc):
 def make_stats(doc):
 	stats = [
 		DefinitionItem([
-			Span(*metadata.inlines(doc, 'ArchiveStyle.localization-stats-updated', 'Last update'), identifier='ArchiveStyle.stats.updated')
+			Span(*metadata.inlines(doc, 'ArchiveStyle.localization-stats-updated', 'Last update'), identifier='ArchiveStyle-chapter.stats.updated')
 		], [
 			Definition(
 				RawBlock('<time datetime="' + doc.stats['updated'].isoformat(timespec='milliseconds') + '">'),
@@ -62,22 +62,22 @@ def make_stats(doc):
 			)
 		]),
 		DefinitionItem([
-			Span(*metadata.inlines(doc, 'ArchiveStyle.localization-stats-paras', 'Paragraphs'), identifier='ArchiveStyle.stats.paras')
+			Span(*metadata.inlines(doc, 'ArchiveStyle.localization-stats-paras', 'Paragraphs'), identifier='ArchiveStyle-chapter.stats.paras')
 		], [
 			Definition(Plain(Str(format(doc.stats['paras'], ','))))
 		]),
 		DefinitionItem([
-			Span(*metadata.inlines(doc, 'ArchiveStyle.localization-stats-words', 'Words'), identifier='ArchiveStyle.stats.words')
+			Span(*metadata.inlines(doc, 'ArchiveStyle.localization-stats-words', 'Words'), identifier='ArchiveStyle-chapter.stats.words')
 		], [
 			Definition(Plain(Str(format(doc.stats['words'], ','))))
 		]),
 		DefinitionItem([
-			Span(*metadata.inlines(doc, 'ArchiveStyle.localization-stats-chars', 'Characters'), identifier='ArchiveStyle.stats.chars')
+			Span(*metadata.inlines(doc, 'ArchiveStyle.localization-stats-chars', 'Characters'), identifier='ArchiveStyle-chapter.stats.chars')
 		], [
 			Definition(Plain(Str(format(doc.stats['chars'], ','))))
 		]),
 		DefinitionItem([
-			Span(*metadata.inlines(doc, 'ArchiveStyle.localization-stats-time', 'Minutes to read'), identifier='ArchiveStyle.stats.time')
+			Span(*metadata.inlines(doc, 'ArchiveStyle.localization-stats-time', 'Minutes to read'), identifier='ArchiveStyle-chapter.stats.time')
 		], [
 			Definition(Plain(Str(u'\u223C' + format(doc.stats['time'], ','))))
 		])
@@ -93,17 +93,17 @@ def make_stats(doc):
 		ordered = True
 	for path in keys:
 		name = metadata.inlines('ArchiveStyle.localization-stats-' + path, path.replace('_', ' ').capitalize())
-		value = doc.get_metadata('ArchiveStyle.stats', builtin=False).content[next(i for i, v in enumerate(statsdict) if v[0] == path)].content[1] if ordered else doc.get_metadata('ArchiveStyle.stats.' + path, builtin=False)
+		value = doc.get_metadata('ArchiveStyle.stats', builtin=False).content[next(i for i, v in enumerate(statsdict) if v[0] == path)].content[1] if ordered else doc.get_metadata('ArchiveStyle-chapter.stats.' + path, builtin=False)
 		if isinstance(value, MetaList):
 			stats.append(DefinitionItem(
-				[Span(*name, identifier='ArchiveStyle.stats.' + path)],
+				[Span(*name, identifier='ArchiveStyle-chapter.stats.' + path)],
 				map(lambda item: Definition(*item), map(content.blocks, value.content))
 			))
 		else:
 			item = content.blocks(value)
 			if (item):
 				stats.append(DefinitionItem(
-					[Span(*name, identifier='ArchiveStyle.stats.' + path)],
+					[Span(*name, identifier='ArchiveStyle-chapter.stats.' + path)],
 					[Definition(*item)]
 				))
 	if len(stats):
@@ -114,7 +114,7 @@ def add_ambles(doc):
 	value = metadata.blocks(doc, 'description')
 	if value:
 		value.insert(0, Header(*(metadata.inlines(doc, 'ArchiveStyle.localization-preamble-summary', 'Summary') + [Str(':')]), level=2))
-		amble.append(Div(*value, identifier='ArchiveStyle.preamble.summary'))
+		amble.append(Div(*value, identifier='ArchiveStyle.preamble.summary', attributes={'role': 'note'}))
 	value = metadata.blocks(doc, 'ArchiveStyle.foreword')
 	if value:
 		value.insert(0, Header(*(metadata.inlines(doc, 'ArchiveStyle.localization-preamble-foreword', 'Foreword') + [Str(':')]), level=2))
@@ -140,11 +140,15 @@ def add_ambles(doc):
 def add_notes(doc):
 	value = metadata.blocks(doc, 'ArchiveStyle-chapter.notes.before')
 	if value:
-		value.insert(0, Header(*(metadata.inlines(doc, 'ArchiveStyle.localization-notes', 'Notes') + [Str(':')]), level=2))
+		value.insert(0, Header(*(metadata.inlines(doc, 'ArchiveStyle.localization-chapter-notes', 'Notes') + [Str(':')]), level=2))
 		doc.content.insert(0, Div(*value, identifier='ArchiveStyle.notes.before', attributes={'role': 'note'}))
+	value = metadata.blocks(doc, 'ArchiveStyle-chapter.description')
+	if value:
+		value.insert(0, Header(*(metadata.inlines(doc, 'ArchiveStyle.localization-chapter-summary', 'Chapter Summary') + [Str(':')]), level=2))
+		doc.content.insert(0, Div(*value, identifier='ArchiveStyle.chapter.summary', attributes={'role': 'note'}))
 	value = metadata.blocks(doc, 'ArchiveStyle-chapter.notes.after')
 	if value:
-		value.insert(0, Header(*(metadata.inlines(doc, 'ArchiveStyle.localization-notes', 'Notes') + [Str(':')]), level=2))
+		value.insert(0, Header(*(metadata.inlines(doc, 'ArchiveStyle.localization-chapter-notes', 'Notes') + [Str(':')]), level=2))
 		doc.content.append(Div(*value, identifier='ArchiveStyle.notes.after', attributes={'role': 'note'}))
 
 def clickthrough_wrap(doc):
@@ -322,10 +326,10 @@ def add_header(doc):
 		] + doc.content.list
 
 def prepare(doc):
-	updated = metadata.text(doc, 'ArchiveStyle.stats.updated')
+	updated = metadata.text(doc, 'ArchiveStyle-chapter.stats.updated')
 	if updated:
 		try:
-			updated = datetime.fromisostring(updated)
+			updated = datetime.fromisoformat(updated)
 		except:
 			updated = datetime.now()
 	else:

@@ -3,6 +3,9 @@
 ## Localization:
 
 ```yml
+localization-chapter-notes: Notes
+localization-chapter-summary: Chapter Summary
+
 localization-metadata-category: Categories
 localization-metadata-character: Characters
 localization-metadata-fandom: Fandoms
@@ -26,8 +29,6 @@ localization-nav-nextarrow: →
 localization-nav-prev: Previous Chapter
 localization-nav-prevarrow: ←
 localization-nav-repository: Source
-
-localization-notes: Notes
 
 localization-postamble-afterword: Afterword
 

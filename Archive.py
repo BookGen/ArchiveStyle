@@ -351,7 +351,7 @@ def action(elem, doc):
 				elem.identifier = elem.identifier or 'ArchiveStyle.verse' + str(doc.stats['verses'])
 		elif isinstance(elem, Para) and not ancestor.metadata(elem):
 			doc.stats['paras'] += 1
-			return Para(Span(*elem.content, identifier='ArchiveStyle.para' + str(doc.stats['paras'])))
+			return Para(Span(*elem.content, identifier='ArchiveStyle.para' + str(doc.stats['paras']), classes=['para']))
 
 def finalize(doc):
 	set_stats(doc)

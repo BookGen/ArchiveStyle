@@ -56,8 +56,30 @@ article p>span.para:Target::BEFORE {
 	}
 }
 blockquote {
+	Position: Relative;
 	Margin: 1REM 1.5REM;
+	Border-Style: None Solid;
+	Border-Color: Transparent;
+	Border-Width: 2PX;
+	Padding: 0 .75REM;
 	Line-Height: 1.5;
+}
+blockquote::BEFORE {
+	Display: Block;
+	Position: Absolute;
+	Top: 0;
+	Bottom: 0;
+	Left: -2PX;
+	Border-Left: 2PX Solid;
+	Opacity: .6;
+	Content: "";
+}
+@media ( Prefers-Color-Scheme: Dark ) {
+	blockquote::BEFORE { Opacity: .4 }
+}
+blockquote blockquote {
+	Border: None;
+	Padding: 0 .25REM;
 }
 aside,
 div[role=note] {

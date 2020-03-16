@@ -147,11 +147,10 @@ h1 {
 	Text-Decoration: Underline;
 }
 #ArchiveStyle\.main>h1:Not(.unnumbered) { Quotes: "“" "”" "‘" "’" }
-#ArchiveStyle\.main>h1:Not(.unnumbered)::BEFORE {
-	Font-Style: Normal;
-	Content: Var(--BookGen-Noun) " " Counter(BookGen-Chapter, Decimal-Leading-Zero) ": " Open-Quote;
-}
+#ArchiveStyle\.main>h1:Not(.unnumbered)::BEFORE { Content: Var(--BookGen-Noun) " " Counter(BookGen-Chapter, Decimal-Leading-Zero) ": " Open-Quote }
+#ArchiveStyle\.main>h1:Not(.unnumbered):Empty::BEFORE { Content: Var(--BookGen-Noun) " " Counter(BookGen-Chapter, Decimal-Leading-Zero) }
 #ArchiveStyle\.main>h1:Not(.unnumbered)::AFTER { Content: Close-Quote }
+#ArchiveStyle\.main>h1:Not(.unnumbered):Empty::AFTER { Content: None }
 html[data--book-gen-type=appendix] #ArchiveStyle\.main>h1:Not(.unnumbered)::BEFORE { Content: Var(--BookGen-Noun) " " Counter(BookGen-Chapter, Upper-Latin) ": " Open-Quote }
 h2 {
 	Margin: .5EM 0;

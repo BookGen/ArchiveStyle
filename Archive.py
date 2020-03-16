@@ -357,15 +357,18 @@ def finalize(doc):
 	set_stats(doc)
 	if doc.format == 'html' or doc.format == 'html5':
 		value = metadata.text(doc, 'next')
-		if value:
-			doc.content.append(Plain(Link(
-				*(metadata.inlines(doc, 'ArchiveStyle.localization-nav-next', [Str('Next Chapter')]) + metadata.inlines(doc, 'ArchiveStyle.localization-nav-nextarrow', [Str(u' \u2192')])),
-				url=value + '#BookGen.main' if value[0] == '.' else value,
-				identifier='ArchiveStyle.main.next'
-			)))
 		doc.content = [
 			RawBlock('\n<!-- BEGIN BODY -->\n<article>', format='html'),
-			Div(*doc.content, identifier='ArchiveStyle.main'),
+			Div(
+				RawBlock('\n<!-- BEGIN BODY CONTENT -->'),
+				*doc.content,
+				RawBlock('<!-- END BODY CONTENT -->\n'),
+				*([Plain(Link(
+					*(metadata.inlines(doc, 'ArchiveStyle.localization-nav-next', [Str('Next Chapter')]) + metadata.inlines(doc, 'ArchiveStyle.localization-nav-nextarrow', [Str(u' \u2192')])),
+					url=value + '#BookGen.main' if value[0] == '.' else value,
+					identifier='ArchiveStyle.main.next'
+				))] if value else []),
+				identifier='ArchiveStyle.main'),
 			RawBlock('</article>\n<!-- END BODY -->\n', format='html')
 		]
 		add_notes(doc)

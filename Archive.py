@@ -9,7 +9,7 @@ import re
 def set_stats(doc):
 	doc_text_content = content.text(doc.content.list, False) # `False` value for `doc` causes raw blocks to be dropped
 	doc.stats['paras'] = int(metadata.text(doc, 'ArchiveStyle-chapter.stats.paras', str(doc.stats['paras'])))
-	doc.stats['words'] = int(metadata.text(doc, 'ArchiveStyle-chapter.stats.words', str(len(re.split(r'(?<=\S)\s+(?=\S)', re.sub(r'\u2014', ' ', re.sub(r'[\u0021-\u0040\u005B-\u0060\u007B-\u007E\u0080-\u00BF\u00D7\u00F7\u2000-\u2BFF\u2E00-\u2E7F]', '', doc_text_content)))))))
+	doc.stats['words'] = int(metadata.text(doc, 'ArchiveStyle-chapter.stats.words', str(len(re.split(r'(?<=\S)\s+(?=\S)', re.sub(r'[\u2000-\u2003\u2014]', ' ', re.sub(r'[\u0021-\u0040\u005B-\u0060\u007B-\u007E\u0080-\u00BF\u00D7\u00F7\u2004-\u2013\u2015-\u2BFF\u2E00-\u2E7F]', '', doc_text_content)))))))
 	doc.stats['chars'] = int(metadata.text(doc, 'ArchiveStyle-chapter.stats.chars', str(len(doc_text_content))))
 	doc.stats['time'] = int(metadata.text(doc, 'ArchiveStyle-chapter.stats.time', str(doc.stats['words'] // 275))) # must be defined after words, obviously
 
@@ -79,7 +79,7 @@ def make_stats(doc):
 		DefinitionItem([
 			Span(*metadata.inlines(doc, 'ArchiveStyle.localization-stats-time', 'Minutes to read'), identifier='ArchiveStyle-chapter.stats.time')
 		], [
-			Definition(Plain(Str(u'\u223C' + format(doc.stats['time'], ','))))
+			Definition(Plain(Str('\u223C' + format(doc.stats['time'], ','))))
 		])
 	]
 	statsdict = doc.get_metadata('ArchiveStyle.stats')
@@ -209,10 +209,10 @@ def add_nav(doc):
 	)]
 	for path, name in [
 		('index', metadata.inlines(doc, 'localization-type-index', 'Contents')),
-		('first', metadata.inlines(doc, 'ArchiveStyle.localization-nav-firstarrow', u'\u21D0 ') + metadata.inlines(doc, 'ArchiveStyle.localization-nav-first', 'First Chapter')),
-		('prev', metadata.inlines(doc, 'ArchiveStyle.localization-nav-prevarrow', u'\u2190 ') + metadata.inlines(doc, 'ArchiveStyle.localization-nav-prev', 'Previous Chapter')),
-		('next', metadata.inlines(doc, 'ArchiveStyle.localization-nav-next', 'Next Chapter') + metadata.inlines(doc, 'ArchiveStyle.localization-nav-nextarrow', u' \u2192')),
-		('last', metadata.inlines(doc, 'ArchiveStyle.localization-nav-last', 'Latest Chapter') + metadata.inlines(doc, 'ArchiveStyle.localization-nav-lastarrow', u' \u21D2')),
+		('first', metadata.inlines(doc, 'ArchiveStyle.localization-nav-firstarrow', '\u21D0 ') + metadata.inlines(doc, 'ArchiveStyle.localization-nav-first', 'First Chapter')),
+		('prev', metadata.inlines(doc, 'ArchiveStyle.localization-nav-prevarrow', '\u2190 ') + metadata.inlines(doc, 'ArchiveStyle.localization-nav-prev', 'Previous Chapter')),
+		('next', metadata.inlines(doc, 'ArchiveStyle.localization-nav-next', 'Next Chapter') + metadata.inlines(doc, 'ArchiveStyle.localization-nav-nextarrow', ' \u2192')),
+		('last', metadata.inlines(doc, 'ArchiveStyle.localization-nav-last', 'Latest Chapter') + metadata.inlines(doc, 'ArchiveStyle.localization-nav-lastarrow', ' \u21D2')),
 		('biblio', metadata.inlines(doc, 'localization-type-biblio', 'Bibliography')),
 		('repository', metadata.inlines(doc, 'ArchiveStyle.localization-nav-repository', 'Source'))
 	]:
@@ -364,7 +364,7 @@ def finalize(doc):
 				*doc.content,
 				RawBlock('<!-- END BODY CONTENT -->\n'),
 				*([Plain(Link(
-					*(metadata.inlines(doc, 'ArchiveStyle.localization-nav-next', [Str('Next Chapter')]) + metadata.inlines(doc, 'ArchiveStyle.localization-nav-nextarrow', [Str(u' \u2192')])),
+					*(metadata.inlines(doc, 'ArchiveStyle.localization-nav-next', [Str('Next Chapter')]) + metadata.inlines(doc, 'ArchiveStyle.localization-nav-nextarrow', [Str(' \u2192')])),
 					url=value + '#BookGen.main' if value[0] == '.' else value,
 					identifier='ArchiveStyle.main.next'
 				))] if value else []),
@@ -383,5 +383,5 @@ def finalize(doc):
 def main(doc=None):
 	return run_filter(action, doc=doc, prepare=prepare, finalize=finalize)
 
-if __name__ == "__main__":
+if __name__ == '__main__':
 	main()
